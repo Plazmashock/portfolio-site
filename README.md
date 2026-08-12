@@ -26,7 +26,6 @@ One-button QA automation: an always-on engine reads support cases in a dedicated
 
 ### Beehive Plus
 Chrome extension that injects admin-panel context (order details, user history, a GIF picker for team morale) straight into the internal case-management tool. Case content in the screenshot is blurred.
-[Source](https://github.com/Plazmashock/beehive-plus)
 
 ![Injected user-context panel and GIF picker on a case page](public/img/gifpicker.webp)
 
