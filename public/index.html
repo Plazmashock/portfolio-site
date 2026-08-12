@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ioane Kordzadze — Support Ops & Tooling</title>
+<meta name="description" content="Customer Support Operations Manager at Bolt Food who builds the production tools his team runs on. KPI dashboards, shift schedulers, QA automation, scheduled AI analysts.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0c0e12;
+  --bg-raise: #12151c;
+  --bg-card: #141822;
+  --line: #232937;
+  --line-bright: #333c52;
+  --text: #e8ebf2;
+  --text-dim: #8b93a7;
+  --text-faint: #5a6275;
+  --accent: #4ade80;
+  --accent-dim: rgba(74, 222, 128, 0.12);
+  --amber: #fbbf24;
+  --sans: 'Space Grotesk', sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+::selection { background: var(--accent); color: var(--bg); }
+
+.wrap { max-width: 1060px; margin: 0 auto; padding: 0 24px; }
+
+/* ── grid backdrop ── */
+.grid-bg {
+  position: fixed; inset: 0; z-index: -1;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 56px 56px;
+  opacity: 0.35;
+  mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, black 30%, transparent 75%);
+}
+
+/* ── top bar ── */
+.topbar {
+  border-bottom: 1px solid var(--line);
+  background: rgba(12, 14, 18, 0.85);
+  backdrop-filter: blur(8px);
+  position: sticky; top: 0; z-index: 10;
+}
+.topbar .wrap {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 54px;
+}
+.brand { font-family: var(--mono); font-size: 13px; color: var(--text-dim); }
+.brand b { color: var(--text); font-weight: 600; }
+.brand .dot { color: var(--accent); }
+nav { display: flex; gap: 22px; }
+nav a {
+  color: var(--text-dim); text-decoration: none;
+  font-family: var(--mono); font-size: 12.5px;
+  transition: color 0.15s;
+}
+nav a:hover { color: var(--accent); }
+
+/* ── hero ── */
+.hero { padding: 96px 0 64px; }
+.hero .status {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: 12px; color: var(--text-dim);
+  border: 1px solid var(--line-bright); border-radius: 999px;
+  padding: 5px 14px; margin-bottom: 28px;
+  animation: rise 0.5s ease both;
+}
+.status .pulse {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.6);
+  animation: pulse 2.2s infinite;
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.55); }
+  70% { box-shadow: 0 0 0 8px rgba(74, 222, 128, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+}
+h1 {
+  font-size: clamp(38px, 6.5vw, 64px);
+  font-weight: 700; line-height: 1.05; letter-spacing: -0.02em;
+  max-width: 15ch;
+  animation: rise 0.5s 0.08s ease both;
+}
+h1 .accent { color: var(--accent); }
+.hero .sub {
+  margin-top: 24px; max-width: 58ch;
+  color: var(--text-dim); font-size: 17px;
+  animation: rise 0.5s 0.16s ease both;
+}
+.hero .sub b { color: var(--text); font-weight: 500; }
+.hero .links {
+  margin-top: 36px; display: flex; gap: 12px; flex-wrap: wrap;
+  animation: rise 0.5s 0.24s ease both;
+}
+.btn {
+  font-family: var(--mono); font-size: 13px; text-decoration: none;
+  padding: 10px 20px; border-radius: 6px;
+  border: 1px solid var(--line-bright); color: var(--text);
+  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+}
+.btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+.btn.primary { background: var(--accent); color: #08240f; border-color: var(--accent); font-weight: 600; }
+.btn.primary:hover { background: #6ee7a0; }
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── kpi strip ── */
+.kpis {
+  border: 1px solid var(--line); border-radius: 10px;
+  background: var(--bg-raise);
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  overflow: hidden;
+  animation: rise 0.5s 0.32s ease both;
+}
+.kpi { padding: 22px 18px; border-left: 1px solid var(--line); }
+.kpi:first-child { border-left: none; }
+.kpi .label {
+  font-family: var(--mono); font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--text-faint); margin-bottom: 8px;
+}
+.kpi .value { font-family: var(--mono); font-size: 15px; color: var(--text-dim); }
+.kpi .value b { color: var(--accent); font-size: 22px; font-weight: 600; }
+.kpi .value .arrow { color: var(--text-faint); padding: 0 4px; }
+.kpis-note {
+  font-family: var(--mono); font-size: 11.5px; color: var(--text-faint);
+  margin-top: 10px; text-align: right;
+}
+
+/* ── sections ── */
+section { padding: 72px 0 0; }
+.sec-head {
+  display: flex; align-items: baseline; gap: 16px; margin-bottom: 28px;
+}
+.sec-head h2 {
+  font-size: 26px; font-weight: 600; letter-spacing: -0.01em;
+}
+.sec-head .tag { font-family: var(--mono); font-size: 12px; color: var(--accent); }
+.sec-head .rule { flex: 1; height: 1px; background: var(--line); }
+.sec-sub {
+  color: var(--text-dim); font-size: 14.5px;
+  margin: -16px 0 26px; max-width: 74ch;
+}
+.sec-sub b { color: var(--text); font-weight: 500; }
+
+/* ── projects ── */
+.proj {
+  border: 1px solid var(--line); border-radius: 10px;
+  background: var(--bg-card);
+  padding: 28px;
+  margin-bottom: 18px;
+  display: grid; grid-template-columns: 1fr auto; gap: 8px 24px;
+  transition: border-color 0.2s;
+  position: relative;
+}
+.proj:hover { border-color: var(--line-bright); }
+.proj .num {
+  position: absolute; top: 28px; right: 28px;
+  font-family: var(--mono); font-size: 12px; color: var(--text-faint);
+}
+.proj h3 { font-size: 19px; font-weight: 600; grid-column: 1; }
+.proj h3 .live {
+  font-family: var(--mono); font-size: 10.5px; font-weight: 500;
+  color: var(--accent); background: var(--accent-dim);
+  border-radius: 4px; padding: 3px 8px; margin-left: 10px;
+  vertical-align: 2px; letter-spacing: 0.05em;
+}
+.proj .desc { grid-column: 1; color: var(--text-dim); font-size: 15px; max-width: 68ch; margin-top: 6px; }
+.proj .desc b { color: var(--text); font-weight: 500; }
+.proj .meta {
+  grid-column: 1; margin-top: 16px;
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+}
+.chip {
+  font-family: var(--mono); font-size: 11.5px; color: var(--text-dim);
+  border: 1px solid var(--line); border-radius: 4px; padding: 3px 9px;
+}
+.proj .actions { grid-column: 1; margin-top: 18px; display: flex; gap: 10px; }
+.plink {
+  font-family: var(--mono); font-size: 12.5px; text-decoration: none;
+  color: var(--accent); border: 1px solid transparent;
+  padding: 6px 0; transition: opacity 0.15s;
+}
+.plink:hover { opacity: 0.75; }
+.plink.dim { color: var(--text-dim); }
+.shot {
+  grid-column: 1 / -1; display: block; margin-top: 20px;
+  border: 1px solid var(--line); border-radius: 8px; overflow: hidden;
+  transition: border-color 0.2s;
+}
+.shot:hover { border-color: var(--line-bright); }
+.shot img { display: block; width: 100%; height: auto; }
+
+/* ── about ── */
+.about-grid { display: grid; grid-template-columns: 3fr 2fr; gap: 40px; }
+.about p { color: var(--text-dim); font-size: 15.5px; margin-bottom: 16px; max-width: 62ch; }
+.about p b { color: var(--text); font-weight: 500; }
+.facts {
+  border: 1px solid var(--line); border-radius: 10px; background: var(--bg-raise);
+  padding: 24px; align-self: start;
+  font-family: var(--mono); font-size: 13px;
+}
+.facts .row {
+  display: flex; justify-content: space-between; gap: 16px;
+  padding: 9px 0; border-bottom: 1px solid var(--line);
+}
+.facts .row:last-child { border-bottom: none; }
+.facts .k { color: var(--text-faint); }
+.facts .v { color: var(--text); text-align: right; }
+.facts .v a { color: var(--accent); text-decoration: none; }
+
+/* ── footer ── */
+footer {
+  margin-top: 88px; border-top: 1px solid var(--line);
+  padding: 36px 0 48px;
+}
+footer .wrap {
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 16px;
+}
+footer .sig { font-family: var(--mono); font-size: 12.5px; color: var(--text-faint); }
+footer .out { display: flex; gap: 20px; flex-wrap: wrap; }
+footer .out a {
+  font-family: var(--mono); font-size: 12.5px;
+  color: var(--text-dim); text-decoration: none;
+}
+footer .out a:hover { color: var(--accent); }
+
+@media (max-width: 760px) {
+  .kpis { grid-template-columns: 1fr 1fr; }
+  .kpi:nth-child(odd) { border-left: none; }
+  .kpi { border-top: 1px solid var(--line); }
+  .kpi:nth-child(-n+2) { border-top: none; }
+  .about-grid { grid-template-columns: 1fr; }
+  nav { display: none; }
+  .hero { padding: 64px 0 48px; }
+}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+
+<header class="topbar">
+  <div class="wrap">
+    <div class="brand"><b>ioane.kordzadze</b><span class="dot">●</span><span> support-ops</span></div>
+    <nav>
+      <a href="#internal">projects</a>
+      <a href="#about">about</a>
+      <a href="#contact">contact</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+    <div class="status"><span class="pulse"></span>Customer Support Operations Manager @ Bolt Food · Tbilisi</div>
+    <h1>I run a support team — and <span class="accent">build the software</span> it runs on.</h1>
+    <p class="sub">Two years at Bolt Food, three roles, one pattern: find the structural gap, build the tool, ship it to production. My team's scheduler, KPI dashboard, QA pipeline, and the automations that feed them aren't side projects — <b>they're in daily use</b>, built with no formal engineering support.</p>
+    <div class="links">
+      <a class="btn primary" href="#internal">See the tools</a>
+      <a class="btn" href="https://github.com/Plazmashock" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn" href="https://linkedin.com/in/ioanekordzadze" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="btn" href="cv.pdf" target="_blank" rel="noopener">Resume</a>
+    </div>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi">
+      <div class="label">CSAT</div>
+      <div class="value">77.9%<span class="arrow">→</span><b>86.4%</b></div>
+    </div>
+    <div class="kpi">
+      <div class="label">First response</div>
+      <div class="value">8 min<span class="arrow">→</span><b>21 s</b></div>
+    </div>
+    <div class="kpi">
+      <div class="label">Resolution time</div>
+      <div class="value">10.3 h<span class="arrow">→</span><b>1.5 h</b></div>
+    </div>
+    <div class="kpi">
+      <div class="label">Reopen rate</div>
+      <div class="value">12.1%<span class="arrow">→</span><b>9.6%</b></div>
+    </div>
+    <div class="kpi">
+      <div class="label">Ticket automation</div>
+      <div class="value">~18%<span class="arrow">→</span><b>~35%</b></div>
+    </div>
+  </div>
+  <div class="kpis-note">team results over six months of coaching + tooling, 20-agent team · automation rate from rebuilding the bot's knowledge base</div>
+
+  <section id="internal">
+    <div class="sec-head">
+      <span class="tag">01</span>
+      <h2>Internal tools</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="sec-sub">Built at Bolt Food for the support org and <b>running in production today</b> — not prototypes. The repos below are sanitized copies: employee names replaced, demo data seeded, credentials stripped.</p>
+
+    <div class="proj">
+      <div class="num">/01</div>
+      <h3>CS Performance Dashboard<span class="live">LIVE DEMO</span></h3>
+      <p class="desc">AI-powered KPI and review platform used by <b>30 managers across 180 agents</b>. Per-agent trends, team rankings, weighted bonus calculator, AI-generated review drafts with editable prompts, Slack delivery, PDF export. Cut weekly review prep from a full shift to under 2 hours.</p>
+      <div class="meta">
+        <span class="chip">Angular</span><span class="chip">TypeScript</span><span class="chip">Firebase</span><span class="chip">ECharts</span><span class="chip">Gemini API</span>
+      </div>
+      <div class="actions">
+        <a class="plink" href="https://io-kpi-dashboard-demo.web.app" target="_blank" rel="noopener">live demo ↗</a>
+        <a class="plink dim" href="https://github.com/Plazmashock/cs-kpi-dashboard" target="_blank" rel="noopener">source ↗</a>
+      </div>
+      <a class="shot" href="img/dashboard.webp" target="_blank" rel="noopener"><img src="img/dashboard.webp" alt="Performance Overview — KPI cards with goals, deltas and trend vs previous week" loading="lazy"></a>
+    </div>
+
+    <div class="proj">
+      <div class="num">/02</div>
+      <h3>CS Shift Scheduler<span class="live">LIVE DEMO</span></h3>
+      <p class="desc">24/7 roster generator built on a <b>constraint solver (Google OR-Tools CP-SAT)</b> — rest rules, coverage minimums, leave imports, shift-swap approvals, overtime tracking, Slack + Google Calendar integrations. Replaced a ~$1,000/yr paid service; ~25 daily users. Backed by a 9-module pytest suite.</p>
+      <div class="meta">
+        <span class="chip">Python</span><span class="chip">OR-Tools</span><span class="chip">FastAPI</span><span class="chip">React</span><span class="chip">Cloud Run</span>
+      </div>
+      <div class="actions">
+        <a class="plink" href="https://io-scheduler-demo.web.app" target="_blank" rel="noopener">live demo ↗</a>
+        <a class="plink dim" href="https://github.com/Plazmashock/cs-shift-scheduler" target="_blank" rel="noopener">source ↗</a>
+      </div>
+      <a class="shot" href="img/scheduler.webp" target="_blank" rel="noopener"><img src="img/scheduler.webp" alt="CS Scheduler — daily coverage timeline and weekly shift grid (demo data)" loading="lazy"></a>
+    </div>
+
+    <div class="proj">
+      <div class="num">/03</div>
+      <h3>QA Review Cockpit<span class="live">LIVE DEMO</span></h3>
+      <p class="desc">One-button QA automation: an always-on engine drives a dedicated browser, reads support cases, scores them against the company scorecard and policy knowledge base with Claude, and fills the review queue. <b>Turned hours of manual ticket QA into a supervised pipeline.</b></p>
+      <div class="meta">
+        <span class="chip">Node.js</span><span class="chip">Claude API</span><span class="chip">CDP</span><span class="chip">launchd</span>
+      </div>
+      <div class="actions">
+        <a class="plink" href="https://io-qa-cockpit-demo.web.app" target="_blank" rel="noopener">live demo ↗</a>
+        <a class="plink dim" href="https://github.com/Plazmashock/qa-review-cockpit" target="_blank" rel="noopener">source ↗</a>
+      </div>
+      <a class="shot" href="img/qacockpit.webp" target="_blank" rel="noopener"><img src="img/qacockpit.webp" alt="QA Cockpit — case queue with statuses and an auto-filled scorecard (synthetic demo data)" loading="lazy"></a>
+    </div>
+
+    <div class="proj">
+      <div class="num">/04</div>
+      <h3>Beehive Plus</h3>
+      <p class="desc">Chrome extension that augments the internal case-management tool with admin-panel context the support team otherwise had to look up by hand — order details, provider info, and history injected straight into the case page.</p>
+      <div class="meta">
+        <span class="chip">JavaScript</span><span class="chip">Chrome Extension</span><span class="chip">MV3</span>
+      </div>
+      <div class="actions">
+        <a class="plink dim" href="https://github.com/Plazmashock/beehive-plus" target="_blank" rel="noopener">source ↗</a>
+      </div>
+      <a class="shot" href="img/gifpicker.webp" target="_blank" rel="noopener"><img src="img/gifpicker.webp" alt="Beehive Plus — injected user-context panel and GIF picker on a case page (case content blurred)" loading="lazy"></a>
+    </div>
+
+  </section>
+
+  <!-- Personal projects section removed until there's something real to put in it.
+       To restore: copy a .proj card above into a new <section id="personal">. -->
+
+  <section id="about">
+    <div class="sec-head">
+      <span class="tag">02</span>
+      <h2>About</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="about-grid">
+      <div class="about">
+        <p>I started at Bolt Food as a junior operations specialist and became a support manager in under two years. At every step I built software to remove the manual work around me — an invoice generator handling 1,300+ providers, a diagnostic dashboard for delivery delays, then the full toolkit my CS team uses today.</p>
+        <p>I'm not a traditional engineer. <b>I'm an operator who codes</b>: I live inside the workflows I automate, so the tools fit — and they're in daily use across the support org, from my own 20-agent team to 30 managers on the dashboard. Built with React, Angular, Python, and heavy, deliberate use of AI-assisted development.</p>
+        <p>Around the tools runs an automation layer: <b>Slack bots</b> that DM every agent their weekly scorecard and admins a 9:00&nbsp;AM roster, and <b>four scheduled Claude agents</b> that finish the recurring analysis before I start work — chatbot performance reviews from 40+ BI exports, monthly review drafts with every number re-verified by a subagent, my morning checklist. Shared rule: a stale feed means alert and stop, never an estimated number.</p>
+      </div>
+      <div class="facts">
+        <div class="row"><span class="k">role</span><span class="v">CS Operations Manager, Bolt Food</span></div>
+        <div class="row"><span class="k">team</span><span class="v">20 agents, 24/7</span></div>
+        <div class="row"><span class="k">based</span><span class="v">Tbilisi, Georgia</span></div>
+        <div class="row"><span class="k">stack</span><span class="v">Python · TS · React · Angular</span></div>
+        <div class="row"><span class="k">education</span><span class="v">BBA, GPA 3.74</span></div>
+        <div class="row"><span class="k">cv</span><span class="v"><a href="cv.pdf" target="_blank" rel="noopener">download pdf ↗</a></span></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="contact">
+  <div class="wrap">
+    <div class="sig">© 2026 Ioane Kordzadze — built by hand, no template</div>
+    <div class="out">
+      <a href="mailto:ioane.kordzadze@outlook.com">ioane.kordzadze@outlook.com</a>
+      <a href="https://github.com/Plazmashock" target="_blank" rel="noopener">github/Plazmashock</a>
+      <a href="https://linkedin.com/in/ioanekordzadze" target="_blank" rel="noopener">linkedin</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
